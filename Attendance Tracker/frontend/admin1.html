@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Attendance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 1000px;
+            transition: all 0.3s ease;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1a365d;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            position: relative;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #1a365d;
+            font-weight: 600;
+        }
+
+        .tab-slider {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background: #1a365d;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-bar {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        thead {
+            background-color: #f8f9fa;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            color: #1a365d;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e7ff;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #e0e7ff;
+            color: #444;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #1a365d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .form-group select {
+            appearance: none;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 1rem center/12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn-large {
+            width: 100%;
+            padding: 1rem;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 2px solid #e0e7ff;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.1);
+            border-color: #1a365d;
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .number {
+            color: #1a365d;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid #e0e7ff;
+            background: white;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button.active {
+            background: #1a365d;
+            color: white;
+            border-color: #1a365d;
+        }
+
+        .pagination button:hover:not(.active) {
+            border-color: #1a365d;
+            color: #1a365d;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Admin Panel</h1>
+            <p>Manage users and attendance data</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">User Management</div>
+            <div class="tab" onclick="switchTab(1)">Attendance Records</div>
+            <div class="tab-slider"></div>
+        </div>
+
+        <div class="tab-content active" id="users-tab">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="number">245</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Teachers</h3>
+                    <div class="number">32</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Students</h3>
+                    <div class="number">213</div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search users...">
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Smith</td>
+                            <td>john.smith@example.com</td>
+                            <td>Teacher</td>
+                            <td>Active</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Emily Johnson</td>
+                            <td>emily.j@example.com</td>
+                            <td>Student</td>
+                            <td>Active</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Michael Brown</td>
+                            <td>m.brown@example.com</td>
+                            <td>Student</td>
+                            <td>Inactive</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Williams</td>
+                            <td>sarah.w@example.com</td>
+                            <td>Teacher</td>
+                            <td>Active</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>David Lee</td>
+                            <td>david.lee@example.com</td>
+                            <td>Student</td>
+                            <td>Active</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <h2 style="margin: 2rem 0 1rem; color: #1a365d; font-family: 'Playfair Display', serif;">Add New User</h2>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter email address">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Role</label>
+                        <select>
+                            <option value="">Select role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" placeholder="Create password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large">Add User</button>
+            </form>
+        </div>
+
+        <div class="tab-content" id="attendance-tab">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Today's Attendance</h3>
+                    <div class="number">89%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Weekly Average</h3>
+                    <div class="number">92%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Monthly Average</h3>
+                    <div class="number">88%</div>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search attendance records...">
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Class</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Attendance %</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Feb 26, 2025</td>
+                            <td>Mathematics 101</td>
+                            <td>27</td>
+                            <td>3</td>
+                            <td>90%</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Feb 26, 2025</td>
+                            <td>History 202</td>
+                            <td>19</td>
+                            <td>1</td>
+                            <td>95%</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Feb 25, 2025</td>
+                            <td>Physics 103</td>
+                            <td>22</td>
+                            <td>5</td>
+                            <td>81%</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Feb 25, 2025</td>
+                            <td>Computer Science 303</td>
+                            <td>18</td>
+                            <td>2</td>
+                            <td>90%</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Feb 24, 2025</td>
+                            <td>English 201</td>
+                            <td>24</td>
+                            <td>1</td>
+                            <td>96%</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            
+
+            <h2 style="margin: 2rem 0 1rem; color: #1a365d; font-family: 'Playfair Display', serif;">Record New Attendance</h2>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select>
+                            <option value="">Select class</option>
+                            <option value="math101">Mathematics 101</option>
+                            <option value="hist202">History 202</option>
+                            <option value="phys103">Physics 103</option>
+                            <option value="cs303">Computer Science 303</option>
+                            <option value="eng201">English 201</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large">Take Attendance</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ---- Greet the logged-in admin by name ------------------------------
+        // Pull the name saved at login and show it under the panel title.
+        (function () {
+            const name = localStorage.getItem('userName');
+            const token = localStorage.getItem('token');
+            if (!token || !name) {
+                window.location.href = 'log_in.html';
+                return;
+            }
+            const subtitle = document.querySelector('.title p');
+            if (subtitle) subtitle.textContent = 'Welcome, ' + name + ' \u2014 manage users and attendance data';
+        })();
+
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabSlider = document.querySelector('.tab-slider');
+            
+            // Update tabs
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update tab slider position
+            tabSlider.style.left = `${index * 50}%`;
+            
+            // Update content
+            tabContents.forEach((content, i) => {
+                if (i === index) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Function to handle the Add New User form submission
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the Add New User form
+    const addUserForm = document.querySelector('#users-tab form');
+    
+    addUserForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form input values
+        const name = this.querySelector('input[placeholder="Enter full name"]').value;
+        const email = this.querySelector('input[placeholder="Enter email address"]').value;
+        const role = this.querySelector('select').value;
+        const password = this.querySelector('input[type="password"]').value;
+        
+        // Validate form inputs
+        if (!name || !email || !role || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
+        
+        // Create new user object
+        const newUser = {
+            name: name,
+            email: email,
+            role: role,
+            password: password,
+            status: 'Active'
+        };
+        
+        // In a real application, you would send this data to your server
+        // For demonstration, we'll just add it to the table
+        addUserToTable(newUser);
+        
+        // Update stats
+        updateUserStats(newUser.role);
+        
+        // Reset the form
+        this.reset();
+        
+        // Show success message
+        alert('User added successfully!');
+    });
+    
+    // Function to add a new user to the table
+    function addUserToTable(user) {
+        const usersTable = document.querySelector('#users-tab table tbody');
+        
+        // Create new row
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.role}</td>
+            <td>${user.status}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn btn-primary"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        `;
+        
+        // Add delete button functionality
+        const deleteButton = newRow.querySelector('.btn-danger');
+        deleteButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this user?')) {
+                newRow.remove();
+                // Update stats when a user is removed
+                updateUserStats(user.role, true);
+            }
+        });
+        
+        // Add edit button functionality
+        const editButton = newRow.querySelector('.btn-primary');
+        editButton.addEventListener('click', function() {
+            // In a real application, you would populate a form with the user's data
+            alert(`Edit user: ${user.name}`);
+        });
+        
+        // Add the new row to the table
+        usersTable.appendChild(newRow);
+    }
+    
+    // Function to update user statistics
+    function updateUserStats(role, isRemoval = false) {
+        const totalUsersElement = document.querySelector('#users-tab .stat-card:nth-child(1) .number');
+        const teachersElement = document.querySelector('#users-tab .stat-card:nth-child(2) .number');
+        const studentsElement = document.querySelector('#users-tab .stat-card:nth-child(3) .number');
+        
+        let totalUsers = parseInt(totalUsersElement.textContent);
+        let teachers = parseInt(teachersElement.textContent);
+        let students = parseInt(studentsElement.textContent);
+        
+        if (isRemoval) {
+            totalUsers--;
+            if (role === 'teacher') teachers--;
+            if (role === 'student') students--;
+        } else {
+            totalUsers++;
+            if (role === 'teacher') teachers++;
+            if (role === 'student') students++;
+        }
+        
+        totalUsersElement.textContent = totalUsers;
+        teachersElement.textContent = teachers;
+        studentsElement.textContent = students;
+    }
+    
+    // Get the Record New Attendance form
+    const recordAttendanceForm = document.querySelector('#attendance-tab form');
+    
+    recordAttendanceForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form input values
+        const classValue = this.querySelector('select').value;
+        const date = this.querySelector('input[type="date"]').value;
+        
+        // Validate form inputs
+        if (!classValue || !date) {
+            alert('Please select a class and date');
+            return;
+        }
+        
+        // In a real application, this would redirect to a page to mark attendance for individual students
+        // For demonstration, we'll simulate creating a new attendance record
+        
+        // Get the class name from the selected option
+        const className = this.querySelector('select option:checked').textContent;
+        
+        // Generate random attendance data for demonstration
+        const totalStudents = Math.floor(Math.random() * 10) + 20; // 20-30 students
+        const presentStudents = totalStudents - Math.floor(Math.random() * 5); // 0-5 absences
+        const absentStudents = totalStudents - presentStudents;
+        const attendancePercentage = Math.round((presentStudents / totalStudents) * 100);
+        
+        // Create new attendance record
+        const newAttendance = {
+            date: formatDate(date),
+            class: className,
+            present: presentStudents,
+            absent: absentStudents,
+            percentage: attendancePercentage + '%'
+        };
+        
+        // Add the record to the table
+        addAttendanceToTable(newAttendance);
+        
+        // Update attendance statistics
+        updateAttendanceStats(attendancePercentage);
+        
+        // Reset the form
+        this.reset();
+        
+        // Show success message
+        alert('Attendance recorded successfully!');
+    });
+    
+    // Function to format date as "Feb 26, 2025"
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    }
+    
+    // Function to add a new attendance record to the table
+    function addAttendanceToTable(attendance) {
+        const attendanceTable = document.querySelector('#attendance-tab table tbody');
+        
+        // Create new row
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${attendance.date}</td>
+            <td>${attendance.class}</td>
+            <td>${attendance.present}</td>
+            <td>${attendance.absent}</td>
+            <td>${attendance.percentage}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn btn-primary"><i class="fas fa-eye"></i></button>
+                    <button class="btn btn-success"><i class="fas fa-download"></i></button>
+                </div>
+            </td>
+        `;
+        
+        // Add view button functionality
+        const viewButton = newRow.querySelector('.btn-primary');
+        viewButton.addEventListener('click', function() {
+            alert(`View details for ${attendance.class} on ${attendance.date}`);
+        });
+        
+        // Add download button functionality
+        const downloadButton = newRow.querySelector('.btn-success');
+        downloadButton.addEventListener('click', function() {
+            alert(`Downloading attendance report for ${attendance.class} on ${attendance.date}`);
+        });
+        
+        // Add the new row to the beginning of the table
+        attendanceTable.insertBefore(newRow, attendanceTable.firstChild);
+    }
+    
+    // Function to update attendance statistics
+    function updateAttendanceStats(newPercentage) {
+        const todayElement = document.querySelector('#attendance-tab .stat-card:nth-child(1) .number');
+        const weeklyElement = document.querySelector('#attendance-tab .stat-card:nth-child(2) .number');
+        const monthlyElement = document.querySelector('#attendance-tab .stat-card:nth-child(3) .number');
+        
+        // Get current values (remove the % sign)
+        let today = parseInt(todayElement.textContent);
+        let weekly = parseInt(weeklyElement.textContent);
+        let monthly = parseInt(monthlyElement.textContent);
+        
+        // Update today's attendance
+        todayElement.textContent = newPercentage + '%';
+        
+        // Simulate updating weekly and monthly averages
+        // In a real application, these would be calculated based on historical data
+        const newWeekly = Math.round((weekly * 6 + newPercentage) / 7);
+        const newMonthly = Math.round((monthly * 29 + newPercentage) / 30);
+        
+        weeklyElement.textContent = newWeekly + '%';
+        monthlyElement.textContent = newMonthly + '%';
+    }
+   });
+
+   function setupSearchBars() {
+    // User search functionality
+    const userSearchInput = document.querySelector('#users-tab .search-bar input');
+    userSearchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const userRows = document.querySelectorAll('#users-tab table tbody tr');
+        
+        userRows.forEach(row => {
+            const name = row.cells[0].textContent.toLowerCase();
+            const email = row.cells[1].textContent.toLowerCase();
+            const role = row.cells[2].textContent.toLowerCase();
+            const status = row.cells[3].textContent.toLowerCase();
+            
+            // Check if any cell contains the search term
+            const matches = name.includes(searchTerm) || 
+                           email.includes(searchTerm) || 
+                           role.includes(searchTerm) || 
+                           status.includes(searchTerm);
+            
+            // Show or hide the row based on the search term
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+    
+    // Attendance records search functionality
+    const attendanceSearchInput = document.querySelector('#attendance-tab .search-bar input');
+    attendanceSearchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const attendanceRows = document.querySelectorAll('#attendance-tab table tbody tr');
+        
+        attendanceRows.forEach(row => {
+            const date = row.cells[0].textContent.toLowerCase();
+            const className = row.cells[1].textContent.toLowerCase();
+            const present = row.cells[2].textContent.toLowerCase();
+            const absent = row.cells[3].textContent.toLowerCase();
+            const percentage = row.cells[4].textContent.toLowerCase();
+            
+            // Check if any cell contains the search term
+            const matches = date.includes(searchTerm) || 
+                           className.includes(searchTerm) || 
+                           present.includes(searchTerm) || 
+                           absent.includes(searchTerm) || 
+                           percentage.includes(searchTerm);
+            
+            // Show or hide the row based on the search term
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+    
+    // Add clear search functionality when the search field is empty
+    userSearchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Escape' || this.value === '') {
+            this.value = '';
+            // Show all rows when search is cleared
+            document.querySelectorAll('#users-tab table tbody tr').forEach(row => {
+                row.style.display = '';
+            });
+        }
+    });
+    
+    attendanceSearchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Escape' || this.value === '') {
+            this.value = '';
+            // Show all rows when search is cleared
+            document.querySelectorAll('#attendance-tab table tbody tr').forEach(row => {
+                row.style.display = '';
+            });
+        }
+    });
+    
+    // Add clear button functionality
+    // First, add clear icons to the search bars
+    addClearIconToSearchBar('#users-tab .search-bar');
+    addClearIconToSearchBar('#attendance-tab .search-bar');
+}
+
+// Function to add clear icon to search bar
+function addClearIconToSearchBar(searchBarSelector) {
+    const searchBar = document.querySelector(searchBarSelector);
+    const searchInput = searchBar.querySelector('input');
+    
+    // Create clear icon
+    const clearIcon = document.createElement('i');
+    clearIcon.className = 'fas fa-times';
+    clearIcon.style.position = 'absolute';
+    clearIcon.style.right = '15px';
+    clearIcon.style.top = '50%';
+    clearIcon.style.transform = 'translateY(-50%)';
+    clearIcon.style.color = '#666';
+    clearIcon.style.cursor = 'pointer';
+    clearIcon.style.display = 'none'; // Initially hidden
+    
+    // Show/hide clear icon based on input value
+    searchInput.addEventListener('input', function() {
+        clearIcon.style.display = this.value ? 'block' : 'none';
+    });
+    
+    // Clear search when icon is clicked
+    clearIcon.addEventListener('click', function() {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+        this.style.display = 'none';
+    });
+    
+    // Add the clear icon to the search bar
+    searchBar.appendChild(clearIcon);
+}
+
+// Initialize search functionality when the document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    setupSearchBars();
+    
+    // Make sure this doesn't conflict with other DOMContentLoaded event listeners
+    // If you already have one, incorporate this function call into your existing listener
+});
+    </script>
+</body>
+</html>

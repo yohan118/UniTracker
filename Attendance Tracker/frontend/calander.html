@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Calendar | Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            width: 800px;
+            transition: all 0.3s ease;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1a365d;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Calendar Navigation */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .month-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .month-nav h2 {
+            color: #1a365d;
+            font-weight: 600;
+            margin: 0 1.5rem;
+            font-size: 1.3rem;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .nav-btn {
+            background: #e0e7ff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1a365d;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #1a365d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.2);
+        }
+
+        .view-select {
+            position: relative;
+        }
+
+        select#calendar-view {
+            padding: 0.7rem 1.2rem 0.7rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #333;
+            appearance: none;
+            -webkit-appearance: none;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 1rem center/12px;
+        }
+
+        select#calendar-view:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .view-select i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        /* Calendar Grid */
+        .calendar {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 5px;
+        }
+
+        .calendar th {
+            padding: 0.8rem;
+            text-align: center;
+            font-weight: 600;
+            color: #1a365d;
+        }
+
+        .calendar td {
+            height: 80px;
+            width: calc(100% / 7);
+            border-radius: 10px;
+            padding: 0.5rem;
+            vertical-align: top;
+            transition: all 0.3s ease;
+            background: #f8f9fc;
+            position: relative;
+        }
+
+        .calendar td:hover {
+            background: #e0e7ff;
+        }
+
+        .calendar td .day {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .calendar td.today {
+            background: #e0e7ff;
+            border: 2px solid #1a365d;
+        }
+
+        .calendar td.today .day {
+            color: #1a365d;
+        }
+
+        .calendar td.other-month {
+            background: #f0f0f0;
+        }
+
+        .calendar td.other-month .day {
+            color: #aaa;
+        }
+
+        /* Calendar Events */
+        .calendar td .events {
+            margin-top: 5px;
+        }
+
+        .event {
+            padding: 3px 6px;
+            margin-bottom: 3px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+
+        .event.present {
+            background: #e6f7ee;
+            color: #0f884c;
+        }
+
+        .event.absent {
+            background: #fee7e7;
+            color: #dc3545;
+        }
+
+        .event.late {
+            background: #fff8e6;
+            color: #f59f00;
+        }
+
+        /* Attendance Summary */
+        .attendance-summary {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fc;
+            border-radius: 15px;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.1);
+        }
+
+        .summary-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .summary-card .label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .present-card .number {
+            color: #0f884c;
+        }
+
+        .absent-card .number {
+            color: #dc3545;
+        }
+
+        .late-card .number {
+            color: #f59f00;
+        }
+
+        .attendance-rate .number {
+            color: #1a365d;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
+
+        .legend-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .present-color {
+            background: #e6f7ee;
+        }
+
+        .absent-color {
+            background: #fee7e7;
+        }
+
+        .late-color {
+            background: #fff8e6;
+        }
+
+        /* Add More Events Icon */
+        .more-events {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 18px;
+            height: 18px;
+            background: #1a365d;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .container {
+                width: 90%;
+                padding: 1.8rem;
+            }
+            
+            .calendar td {
+                height: 60px;
+            }
+            
+            .attendance-summary {
+                flex-wrap: wrap;
+            }
+            
+            .summary-card {
+                width: 48%;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar th, .calendar td .day {
+                font-size: 12px;
+            }
+            
+            .event {
+                font-size: 10px;
+            }
+            
+            .title h1 {
+                font-size: 1.8rem;
+            }
+            
+            .calendar td {
+                height: 50px;
+                padding: 0.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Attendance Calendar</h1>
+            <p>Track your course attendance and statistics</p>
+        </div>
+        
+        <div class="calendar-nav">
+            <div class="month-nav">
+                <button class="nav-btn" id="prev-month">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <h2 id="current-month">February 2025</h2>
+                <button class="nav-btn" id="next-month">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="view-select">
+                <i class="fas fa-calendar-alt"></i>
+                <select id="calendar-view">
+                    <option value="month">Month View</option>
+                    <option value="week">Week View</option>
+                    <option value="list">List View</option>
+                </select>
+            </div>
+        </div>
+        
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- Calendar days will be generated dynamically -->
+            </tbody>
+        </table>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color present-color"></div>
+                <div class="legend-label">Present</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color absent-color"></div>
+                <div class="legend-label">Absent</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color late-color"></div>
+                <div class="legend-label">Late</div>
+            </div>
+        </div>
+        
+        <div class="attendance-summary">
+            <div class="summary-card present-card">
+                <div class="number" id="present-count">18</div>
+                <div class="label">Present</div>
+            </div>
+            <div class="summary-card absent-card">
+                <div class="number" id="absent-count">2</div>
+                <div class="label">Absent</div>
+            </div>
+            <div class="summary-card late-card">
+                <div class="number" id="late-count">2</div>
+                <div class="label">Late</div>
+            </div>
+            <div class="summary-card attendance-rate">
+                <div class="number" id="attendance-rate">90%</div>
+                <div class="label">Attendance Rate</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample attendance data - structured by month, date and classes
+        const attendanceData = {
+            // February 2025
+            "2-2025": {
+                "3": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "4": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "5": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "6": [{ class: "PHYS101 - 2:00 PM", status: "absent" }],
+                "7": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "10": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "11": [{ class: "MATH202 - 11:00 AM", status: "late" }],
+                "12": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "13": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "14": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "17": [{ class: "CS101 - 9:00 AM", status: "absent" }],
+                "18": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "19": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "20": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "21": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "24": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "25": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "26": [
+                    { class: "CS101 - 9:00 AM", status: "present" },
+                    { class: "ENG105 - 2:00 PM", status: "present" },
+                    { class: "MATH202 - 4:00 PM", status: "present" }
+                ],
+                "27": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "28": [{ class: "ENG105 - 10:00 AM", status: "late" }]
+            },
+            // January 2025
+            "1-2025": {
+                "6": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "7": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "8": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "9": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "10": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "13": [{ class: "CS101 - 9:00 AM", status: "absent" }],
+                "14": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "15": [{ class: "CS101 - 9:00 AM", status: "late" }],
+                "16": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "17": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "20": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "21": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "22": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "23": [{ class: "PHYS101 - 2:00 PM", status: "absent" }],
+                "24": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "27": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "28": [{ class: "MATH202 - 11:00 AM", status: "late" }],
+                "29": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "30": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "31": [{ class: "ENG105 - 10:00 AM", status: "present" }]
+            },
+            // March 2025
+            "3-2025": {
+                "3": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "4": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "5": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "6": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "7": [{ class: "ENG105 - 10:00 AM", status: "present" }],
+                "10": [{ class: "CS101 - 9:00 AM", status: "present" }],
+                "11": [{ class: "MATH202 - 11:00 AM", status: "present" }],
+                "12": [{ class: "CS101 - 9:00 AM", status: "absent" }],
+                "13": [{ class: "PHYS101 - 2:00 PM", status: "present" }],
+                "14": [{ class: "ENG105 - 10:00 AM", status: "late" }]
+            }
+        };
+        
+        // Month navigation
+        const currentMonthEl = document.getElementById('current-month');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const calendarBody = document.getElementById('calendar-body');
+        
+        // Current date for reference
+        const currentDate = new Date();
+        let displayedMonth = currentDate.getMonth();
+        let displayedYear = currentDate.getFullYear();
+        
+        // Month names
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        // Update displayed month
+        function updateMonthDisplay() {
+            currentMonthEl.textContent = `${monthNames[displayedMonth]} ${displayedYear}`;
+        }
+        
+        // Previous month
+        prevMonthBtn.addEventListener('click', function() {
+            displayedMonth--;
+            if (displayedMonth < 0) {
+                displayedMonth = 11;
+                displayedYear--;
+            }
+            updateMonthDisplay();
+            renderCalendar();
+            updateAttendanceSummary();
+        });
+        
+        // Next month
+        nextMonthBtn.addEventListener('click', function() {
+            displayedMonth++;
+            if (displayedMonth > 11) {
+                displayedMonth = 0;
+                displayedYear++;
+            }
+            updateMonthDisplay();
+            renderCalendar();
+            updateAttendanceSummary();
+        });
+        
+        // Render the calendar for current month
+        function renderCalendar() {
+            calendarBody.innerHTML = '';
+            
+            // Get first day of month and total days in month
+            const firstDay = new Date(displayedYear, displayedMonth, 1);
+            const lastDay = new Date(displayedYear, displayedMonth + 1, 0);
+            const totalDays = lastDay.getDate();
+            
+            // Get day of week for first day (0 = Sunday, 6 = Saturday)
+            let firstDayOfWeek = firstDay.getDay();
+            
+            // Get previous month's last date for filling initial cells
+            const prevMonthLastDay = new Date(displayedYear, displayedMonth, 0).getDate();
+            
+            // Calculate days from previous month to display
+            const prevMonthDays = firstDayOfWeek;
+            
+            let date = 1;
+            let nextMonthDate = 1;
+            
+            // Create weeks (rows)
+            for (let i = 0; i < 6; i++) {
+                // Stop rendering if we've already displayed all days
+                if (date > totalDays && i > 0) break;
+                
+                const row = document.createElement('tr');
+                
+                // Create days (cells)
+                for (let j = 0; j < 7; j++) {
+                    const cell = document.createElement('td');
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'day';
+                    
+                    // Add cells from previous month
+                    if (i === 0 && j < firstDayOfWeek) {
+                        cell.className = 'other-month';
+                        const prevDate = prevMonthLastDay - prevMonthDays + j + 1;
+                        dayDiv.textContent = prevDate;
+                        cell.appendChild(dayDiv);
+                    } 
+                    // Add cells from current month
+                    else if (date <= totalDays) {
+                        // Check if it's today
+                        if (date === currentDate.getDate() && 
+                            displayedMonth === currentDate.getMonth() && 
+                            displayedYear === currentDate.getFullYear()) {
+                            cell.className = 'today';
+                        }
+                        
+                        dayDiv.textContent = date;
+                        cell.appendChild(dayDiv);
+                        
+                        // Add events for this date if they exist
+                        const monthKey = `${displayedMonth + 1}-${displayedYear}`;
+                        const dateKey = date.toString();
+                        
+                        if (attendanceData[monthKey] && attendanceData[monthKey][dateKey]) {
+                            const events = attendanceData[monthKey][dateKey];
+                            const eventsDiv = document.createElement('div');
+                            eventsDiv.className = 'events';
+                            
+                            // Add up to 2 events, then show a "more" indicator if needed
+                            const displayCount = events.length > 2 ? 2 : events.length;
+                            
+                            for (let k = 0; k < displayCount; k++) {
+                                const event = events[k];
+                                const eventDiv = document.createElement('div');
+                                eventDiv.className = `event ${event.status}`;
+                                eventDiv.textContent = event.class;
+                                eventDiv.addEventListener('click', function() {
+                                    alert(`Class: ${event.class}\nStatus: ${event.status.charAt(0).toUpperCase() + event.status.slice(1)}`);
+                                });
+                                eventsDiv.appendChild(eventDiv);
+                            }
+                            
+                            // Add "more" indicator if needed
+                            if (events.length > 2) {
+                                const moreDiv = document.createElement('div');
+                                moreDiv.className = 'more-events';
+                                moreDiv.textContent = '+';
+                                moreDiv.addEventListener('click', function() {
+                                    let message = `Additional classes for ${monthNames[displayedMonth]} ${date}:\n`;
+                                    for (let k = 2; k < events.length; k++) {
+                                        message += `- ${events[k].class} (${events[k].status})\n`;
+                                    }
+                                    alert(message);
+                                });
+                                cell.appendChild(eventsDiv);
+                                cell.appendChild(moreDiv);
+                            } else {
+                                cell.appendChild(eventsDiv);
+                            }
+                        }
+                        
+                        date++;
+                    } 
+                    // Add cells from next month
+                    else {
+                        cell.className = 'other-month';
+                        dayDiv.textContent = nextMonthDate;
+                        cell.appendChild(dayDiv);
+                        nextMonthDate++;
+                    }
+                    
+                    row.appendChild(cell);
+                }
+                
+                calendarBody.appendChild(row);
+            }
+        }
+        
+        // Calculate attendance summary for displayed month
+        function updateAttendanceSummary() {
+            const monthKey = `${displayedMonth + 1}-${displayedYear}`;
+            
+            let presentCount = 0;
+            let absentCount = 0;
+            let lateCount = 0;
+            let totalClasses = 0;
+            
+            // If we have data for this month
+            if (attendanceData[monthKey]) {
+                const monthData = attendanceData[monthKey];
+                
+                // Count through all dates in the month
+                for (const dateKey in monthData) {
+                    const events = monthData[dateKey];
+                    
+                    events.forEach(event => {
+                        totalClasses++;
+                        if (event.status === 'present') presentCount++;
+                        else if (event.status === 'absent') absentCount++;
+                        else if (event.status === 'late') lateCount++;
+                    });
+                }
+            }
+            
+            // Update summary display
+            document.getElementById('present-count').textContent = presentCount;
+            document.getElementById('absent-count').textContent = absentCount;
+            document.getElementById('late-count').textContent = lateCount;
+            
+            // Calculate attendance rate
+            const attendanceRate = totalClasses > 0 
+                ? Math.round((presentCount / totalClasses) * 100) 
+                : 0;
+            document.getElementById('attendance-rate').textContent = `${attendanceRate}%`;
+        }
+        
+        // View selector change handler
+        document.getElementById('calendar-view').addEventListener('change', function(e) {
+            alert(`Switching to ${e.target.value} view\nThis feature would be implemented in a real application.`);
+        });
+        
+        // Initialize calendar
+        updateMonthDisplay();
+        renderCalendar();
+        updateAttendanceSummary();
+    </script>
+</body>
+</html>

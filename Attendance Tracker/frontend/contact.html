@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Attendance Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 800px;
+            transition: all 0.3s ease;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1a365d;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .contact-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e7ff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.1);
+            border-color: #1a365d;
+        }
+
+        .contact-card i {
+            font-size: 2rem;
+            color: #1a365d;
+            margin-bottom: 1rem;
+        }
+
+        .contact-card h3 {
+            color: #1a365d;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-card p {
+            color: #666;
+        }
+
+        .contact-card a {
+            color: #1a365d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: #2a5298;
+        }
+
+        .form-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            border: 2px solid #e0e7ff;
+        }
+
+        .form-title {
+            margin-bottom: 1.5rem;
+            color: #1a365d;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #444;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 2.7rem;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.2);
+        }
+
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            border: 2px solid #e0e7ff;
+            color: #1a365d;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #1a365d;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        #message {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.8rem;
+            }
+
+            .title h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Contact Us</h1>
+            <p>We're here to help with any questions or concerns</p>
+        </div>
+
+        <div class="contact-options">
+            <div class="contact-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Email</h3>
+                <p>Send us an email</p>
+                <a href="mailto:support@attendancetracker.com">support@attendancetracker.com</a>
+            </div>
+            <div class="contact-card">
+                <i class="fas fa-phone-alt"></i>
+                <h3>Phone</h3>
+                <p>Call us directly</p>
+                <a href="tel:+1234567890">(123) 456-7890</a>
+            </div>
+            <div class="contact-card">
+                <i class="fas fa-comments"></i>
+                <h3>Live Chat</h3>
+                <p>Chat with our team</p>
+                <a href="#" onclick="alert('Live chat would open here')">Start Chat</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h2 class="form-title">Send us a message</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Your email address">
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <i class="fas fa-tag"></i>
+                    <input type="text" id="subject" placeholder="What is this regarding?">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <i class="fas fa-comment-alt" style="top: 40px;"></i>
+                    <textarea id="message" placeholder="Tell us how we can help you"></textarea>
+                </div>
+                <button type="button" class="btn" onclick="submitForm()">Send Message</button>
+            </form>
+            <div id="message"></div>
+        </div>
+
+        <div class="social-media">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+    </div>
+
+    <script>
+        function submitForm() {
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const subjectInput = document.getElementById('subject');
+            const messageInput = document.getElementById('message');
+            const messageBox = document.getElementById('message');
+            
+            // Simple validation
+            if (nameInput.value === '' || emailInput.value === '' || messageInput.value === '') {
+                messageBox.className = 'error';
+                messageBox.textContent = 'Please fill in all required fields';
+                messageBox.style.display = 'block';
+                return;
+            }
+            
+            // Email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(emailInput.value)) {
+                messageBox.className = 'error';
+                messageBox.textContent = 'Please enter a valid email address';
+                messageBox.style.display = 'block';
+                return;
+            }
+            
+            // Success message (in a real app, you would send data to server here)
+            messageBox.className = 'success';
+            messageBox.textContent = 'Your message has been sent successfully!';
+            messageBox.style.display = 'block';
+            
+            // Reset form
+            document.getElementById('contactForm').reset();
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

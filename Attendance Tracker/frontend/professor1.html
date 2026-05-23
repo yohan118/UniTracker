@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Professor Dashboard - UniTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1a365d;
+            font-size: 2rem;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-info {
+            text-align: right;
+        }
+        
+        .profile-info h3 {
+            color: #1a365d;
+            font-size: 1rem;
+        }
+        
+        .profile-info p {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .dashboard-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-panel.full-width {
+            grid-column: span 2;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h2 {
+            color: #1a365d;
+        }
+        
+        .section-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .section-controls button {
+            padding: 0.5rem;
+            background: #f0f4ff;
+            color: #1a365d;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .attendance-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+        
+        textarea {
+            min-height: 100px;
+            padding-left: 1.2rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 18px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .student-list {
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .student-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a365d;
+            font-weight: bold;
+        }
+
+        .attendance-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            background: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.2);
+        }
+        
+        .attendance-btn {
+            padding: 0.5rem 1rem;
+        }
+        
+        .late-btn {
+            background: #fd7e14;
+        }
+
+        .schedule-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .schedule-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.1);
+        }
+
+        .schedule-card h3 {
+            color: #1a365d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .schedule-details {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+        }
+        
+        .schedule-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .announcement-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .announcement-card h3 {
+            color: #1a365d;
+        }
+        
+        .announcement-date {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .announcement-content {
+            color: #333;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .announcement-footer {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: #1a365d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.5rem;
+            color: #1a365d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            background: #f0f4ff;
+            color: #1a365d;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #1a365d;
+            color: white;
+        }
+        
+        .grading-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .grading-table th, .grading-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .grading-table th {
+            color: #1a365d;
+            font-weight: 600;
+        }
+        
+        .grade-input {
+            width: 60px;
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid #e0e7ff;
+            border-radius: 5px;
+        }
+        
+        .floating-action-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1a365d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.3);
+            z-index: 100;
+        }
+        
+        .floating-action-btn i {
+            font-size: 1.5rem;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        /* Tabs display */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-header h2 {
+            color: #1a365d;
+        }
+        
+        .close-modal {
+            background: none;
+            color: #666;
+            font-size: 1.5rem;
+            padding: 0.2rem;
+        }
+        
+        .close-modal:hover {
+            color: #1a365d;
+            background: none;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #dc3545;
+            z-index: 100;
+        }
+
+        .logout-btn:hover {
+            background: #bb2d3b;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-panel.full-width {
+                grid-column: span 1;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .user-profile {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">
+                <i class="fas fa-chalkboard-teacher fa-2x" style="color: #1a365d;"></i>
+                <h1>Professor Dashboard</h1>
+            </div>
+            <div class="user-profile">
+                <div class="profile-img">
+                    <i class="fas fa-user" style="color: #1a365d; font-size: 1.5rem;"></i>
+                </div>
+                <div class="profile-info">
+                    <h3>Dr. User</h3>
+                    <p>Department of Science</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-panel full-width">
+            <div class="section-header">
+                <h2>Quick Stats</h2>
+                <div class="section-controls">
+                    <button><i class="fas fa-sync-alt"></i></button>
+                    <button><i class="fas fa-calendar-week"></i></button>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-user-graduate"></i>
+                    <h3>127</h3>
+                    <p>Total Students</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-book"></i>
+                    <h3>3</h3>
+                    <p>Active Courses</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>12</h3>
+                    <p>Hours This Week</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>92%</h3>
+                    <p>Attendance Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-panel">
+                <div class="tabs">
+                    <button class="tab active" data-tab="attendance">Attendance</button>
+                    <button class="tab" data-tab="grading">Grading</button>
+                </div>
+                
+                <!-- Attendance Tab Content -->
+                <div class="tab-content active" id="attendance-tab">
+                    <div class="attendance-section">
+                        <div class="section-header">
+                            <h2>Mark Attendance</h2>
+                            <div class="section-controls">
+                                <button><i class="fas fa-download"></i></button>
+                                <button><i class="fas fa-upload"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="attendanceDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <i class="fas fa-book-open"></i>
+                            <select id="courseSelect" required>
+                                <option value="">Select Course</option>
+                                <option value="math101">Mathematics 101</option>
+                                <option value="physics201">Physics 201</option>
+                                <option value="cs301">Computer Science 301</option>
+                            </select>
+                        </div>
+
+                        <div class="student-list">
+                            <div class="student-item">
+                                <div class="student-info">
+                                    <div class="student-avatar">JD</div>
+                                    <span>John Doe (ID: 12345)</span>
+                                </div>
+                                <div class="attendance-actions">
+                                    <button class="present-btn attendance-btn">Present</button>
+                                    <button class="late-btn attendance-btn">Late</button>
+                                    <button class="absent-btn attendance-btn" style="background: #dc3545;">Absent</button>
+                                </div>
+                            </div>
+                            
+                            <div class="student-item">
+                                <div class="student-info">
+                                    <div class="student-avatar">SJ</div>
+                                    <span>Sara Johnson (ID: 12346)</span>
+                                </div>
+                                <div class="attendance-actions">
+                                    <button class="present-btn attendance-btn">Present</button>
+                                    <button class="late-btn attendance-btn">Late</button>
+                                    <button class="absent-btn attendance-btn" style="background: #dc3545;">Absent</button>
+                                </div>
+                            </div>
+                            
+                            <div class="student-item">
+                                <div class="student-info">
+                                    <div class="student-avatar">MP</div>
+                                    <span>Mike Peterson (ID: 12347)</span>
+                                </div>
+                                <div class="attendance-actions">
+                                    <button class="present-btn attendance-btn">Present</button>
+                                    <button class="late-btn attendance-btn">Late</button>
+                                    <button class="absent-btn attendance-btn" style="background: #dc3545;">Absent</button>
+                                </div>
+                            </div>
+                            
+                            <div class="student-item">
+                                <div class="student-info">
+                                    <div class="student-avatar">AT</div>
+                                    <span>Anna Taylor (ID: 12348)</span>
+                                </div>
+                                <div class="attendance-actions">
+                                    <button class="present-btn attendance-btn">Present</button>
+                                    <button class="late-btn attendance-btn">Late</button>
+                                    <button class="absent-btn attendance-btn" style="background: #dc3545;">Absent</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button style="margin-top: 1rem; width: 100%;">
+                            <i class="fas fa-save"></i> Save Attendance
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Grading Tab Content -->
+                <div class="tab-content" id="grading-tab">
+                    <div class="section-header">
+                        <h2>Grade Assignments</h2>
+                        <div class="section-controls">
+                            <button><i class="fas fa-download"></i></button>
+                            <button><i class="fas fa-upload"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <i class="fas fa-book-open"></i>
+                        <select id="assignmentCourseSelect" required>
+                            <option value="">Select Course</option>
+                            <option value="math101">Mathematics 101</option>
+                            <option value="physics201">Physics 201</option>
+                            <option value="cs301">Computer Science 301</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <i class="fas fa-tasks"></i>
+                        <select id="assignmentSelect" required>
+                            <option value="">Select Assignment</option>
+                            <option value="assignment1">Assignment 1</option>
+                            <option value="midterm">Midterm Exam</option>
+                            <option value="project">Group Project</option>
+                        </select>
+                    </div>
+                    
+                    <table class="grading-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Submission</th>
+                                <th>Grade</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Doe</td>
+                                <td><a href="#"><i class="fas fa-file-pdf"></i> View</a></td>
+                                <td><input type="text" class="grade-input" value="85"></td>
+                                <td><button style="padding: 0.4rem 0.8rem;"><i class="fas fa-comment"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>Sara Johnson</td>
+                                <td><a href="#"><i class="fas fa-file-pdf"></i> View</a></td>
+                                <td><input type="text" class="grade-input" value="92"></td>
+                                <td><button style="padding: 0.4rem 0.8rem;"><i class="fas fa-comment"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>Mike Peterson</td>
+                                <td><a href="#"><i class="fas fa-file-pdf"></i> View</a></td>
+                                <td><input type="text" class="grade-input" value="78"></td>
+                                <td><button style="padding: 0.4rem 0.8rem;"><i class="fas fa-comment"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>Anna Taylor</td>
+                                <td><a href="#"><i class="fas fa-file-pdf"></i> View</a></td>
+                                <td><input type="text" class="grade-input" value="95"></td>
+                                <td><button style="padding: 0.4rem 0.8rem;"><i class="fas fa-comment"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <button style="margin-top: 1rem; width: 100%;">
+                        <i class="fas fa-save"></i> Save Grades
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="tabs">
+                    <button class="tab active" data-tab="schedule">Schedule</button>
+                    <button class="tab" data-tab="announcements">Announcements</button>
+                </div>
+                
+                <!-- Schedule Tab Content -->
+                <div class="tab-content active" id="schedule-tab">
+                    <div class="section-header">
+                        <h2>Today's Schedule</h2>
+                        <div class="section-controls">
+                            <button id="add-class-btn"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-card" onclick="openClassDetails()">
+                        <h3>Mathematics 101</h3>
+                        <div class="schedule-details">
+                            <div class="schedule-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>10:00 AM - 11:30 AM</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Room 302</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-users"></i>
+                                <span>42 Students</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <span class="status-badge" style="background: #d4edda; color: #28a745;">
+                                Ongoing
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-card" onclick="openClassDetails()">
+                        <h3>Physics 201</h3>
+                        <div class="schedule-details">
+                            <div class="schedule-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>2:00 PM - 3:30 PM</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Room 415</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-users"></i>
+                                <span>35 Students</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <span class="status-badge" style="background: #fff3cd; color: #856404;">
+                                Upcoming
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="schedule-card" onclick="openClassDetails()">
+                        <h3>Computer Science 301</h3>
+                        <div class="schedule-details">
+                            <div class="schedule-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>4:00 PM - 5:30 PM</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Lab 201</span>
+                            </div>
+                            <div class="schedule-detail">
+                                <i class="fas fa-users"></i>
+                                <span>28 Students</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <span class="status-badge" style="background: #fff3cd; color: #856404;">
+                                Upcoming
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Announcements Tab Content -->
+                <div class="tab-content" id="announcements-tab">
+                    <div class="section-header">
+                        <h2>Announcements</h2>
+                        <div class="section-controls">
+                            <button id="add-announcement-btn"><i class="fas fa-plus"></i> Create</button>
+                        </div>
+                    </div>
+                    
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <h3>Midterm Exam Update</h3>
+                            <span class="announcement-date">Posted 3 days ago</span>
+                        </div>
+                        <p class="announcement-content">
+                            The midterm exam for Mathematics 101 has been rescheduled to next Friday. Please make sure to check the syllabus for topics covered.
+                        </p>
+                        <div class="announcement-footer">
+                            <div>
+                                <span style="color: #1a365d;"><i class="fas fa-users"></i> Mathematics 101</span>
+                            </div>
+                            <div>
+                                <button style="padding: 0.4rem 0.8rem; background: #f0f4ff; color: #1a365d;">
+                                    <i class="fas fa-pen"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="announcement-card">
+                        <div class="announcement-header">
+                            <h3>Office Hours Changed</h3>
+                            <span class="announcement-date">Posted 1 week ago</span>
+                        </div>
+                        <p class="announcement-content">
+                            Due to department meeting, office hours will be changed from Tuesday 2-4 PM to Wednesday 1-3 PM starting next week.
+                        </p>
+                        <div class="announcement-footer">
+                            <div>
+                                <span style="color: #1a365d;"><i class="fas fa-bullhorn"></i> All Courses</span>
+                            </div>
+                            <div>
+                                <button style="padding: 0.4rem 0.8rem; background: #f0f4ff; color: #1a365d;">
+                                    <i class="fas fa-pen"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add floating action button -->
+        <div class="floating-action-btn">
+            <div class="notification-badge">3</div>
+            <i class="fas fa-bell"></i>
+        </div>
+        
+        <!-- Add modals -->
+        <div class="modal" id="class-details-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Class Details: Mathematics 101</h2>
+                    <button class="close-modal" onclick="closeModal('class-details-modal')">&times;</button>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <i class="fas fa-book-open"></i>
+                        <input type="text" value="Mathematics 101" placeholder="Course Name">
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-clock"></i>
+                        <input type="text" value="10:00 AM - 11:30 AM" placeholder="Class Time">
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" value="Room 302" placeholder="Location">
+                        
+                        <script>
+                         // ---- Greet the logged-in professor by name -------------------
+                         // Name comes from localStorage (set at login). No name means
+                         // nobody's logged in, so we send them to the login page.
+                         (function () {
+                            const name = localStorage.getItem('userName');
+                            const token = localStorage.getItem('token');
+                            if (!token || !name) {
+                                window.location.href = 'log_in.html';
+                                return;
+                            }
+                            const nameTag = document.querySelector('.profile-info h3');
+                            if (nameTag) nameTag.textContent = 'Dr. ' + name;
+                         })();
+
+                         // Tab switching functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all tab buttons
+    const tabButtons = document.querySelectorAll('.tab');
+    
+    // Add click event listeners to each tab button
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Get the tab to activate
+            const tabToActivate = this.getAttribute('data-tab');
+            
+            // Get the parent container
+            const parentPanel = this.closest('.dashboard-panel');
+            
+            // Remove active class from all tabs in this panel
+            parentPanel.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all tab content in this panel
+            parentPanel.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show the selected tab content
+            parentPanel.querySelector(`#${tabToActivate}-tab`).classList.add('active');
+        });
+    });
+    
+    // Set up attendance buttons
+    const attendanceButtons = document.querySelectorAll('.attendance-btn');
+    attendanceButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons in this student's actions
+            const actions = this.closest('.attendance-actions');
+            actions.querySelectorAll('.attendance-btn').forEach(btn => {
+                btn.style.opacity = '0.6';
+            });
+            
+            // Mark this button as selected
+            this.style.opacity = '1';
+        });
+    });
+    
+    // Set up add class button
+    const addClassBtn = document.getElementById('add-class-btn');
+    if (addClassBtn) {
+        addClassBtn.addEventListener('click', function() {
+            openAddClassModal();
+        });
+    }
+    
+    // Set up add announcement button
+    const addAnnouncementBtn = document.getElementById('add-announcement-btn');
+    if (addAnnouncementBtn) {
+        addAnnouncementBtn.addEventListener('click', function() {
+            openAddAnnouncementModal();
+        });
+    }
+    
+    // Set up notification button
+    const notificationBtn = document.querySelector('.floating-action-btn');
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function() {
+            openNotificationsModal();
+        });
+    }
+    
+    // Set up attendance save button
+    const saveAttendanceBtn = document.querySelector('#attendance-tab button[style*="margin-top"]');
+    if (saveAttendanceBtn) {
+        saveAttendanceBtn.addEventListener('click', function() {
+            saveAttendance();
+        });
+    }
+    
+    // Set up grades save button
+    const saveGradesBtn = document.querySelector('#grading-tab button[style*="margin-top"]');
+    if (saveGradesBtn) {
+        saveGradesBtn.addEventListener('click', function() {
+            saveGrades();
+        });
+    }
+});
+
+// Modal functions
+function openClassDetails() {
+    document.getElementById('class-details-modal').classList.add('active');
+}
+
+function openAddClassModal() {
+    // Create and show the add class modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'add-class-modal';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Class</h2>
+                <button class="close-modal" onclick="closeModal('add-class-modal')">&times;</button>
+            </div>
+            <div>
+                <div class="form-group">
+                    <i class="fas fa-book-open"></i>
+                    <input type="text" placeholder="Course Name">
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-clock"></i>
+                    <input type="text" placeholder="Class Time">
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input type="text" placeholder="Location">
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-users"></i>
+                    <input type="number" placeholder="Number of Students">
+                </div>
+                <button style="width: 100%; margin-top: 1rem;" onclick="saveNewClass()">
+                    <i class="fas fa-save"></i> Save Class
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function openAddAnnouncementModal() {
+    // Create and show the add announcement modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'add-announcement-modal';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Announcement</h2>
+                <button class="close-modal" onclick="closeModal('add-announcement-modal')">&times;</button>
+            </div>
+            <div>
+                <div class="form-group">
+                    <i class="fas fa-heading"></i>
+                    <input type="text" placeholder="Announcement Title">
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-book-open"></i>
+                    <select>
+                        <option value="">Select Course</option>
+                        <option value="math101">Mathematics 101</option>
+                        <option value="physics201">Physics 201</option>
+                        <option value="cs301">Computer Science 301</option>
+                        <option value="all">All Courses</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Announcement Content"></textarea>
+                </div>
+                <button style="width: 100%; margin-top: 1rem;" onclick="saveAnnouncement()">
+                    <i class="fas fa-bullhorn"></i> Post Announcement
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function openNotificationsModal() {
+    // Create and show the notifications modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'notifications-modal';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Notifications</h2>
+                <button class="close-modal" onclick="closeModal('notifications-modal')">&times;</button>
+            </div>
+            <div>
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <h3>Grade Submission Reminder</h3>
+                        <span class="announcement-date">2 hours ago</span>
+                    </div>
+                    <p class="announcement-content">
+                        Final grades for Mathematics 101 are due by Friday.
+                    </p>
+                </div>
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <h3>Student Request</h3>
+                        <span class="announcement-date">Yesterday</span>
+                    </div>
+                    <p class="announcement-content">
+                        John Doe has requested office hours assistance.
+                    </p>
+                </div>
+                <div class="announcement-card">
+                    <div class="announcement-header">
+                        <h3>Department Meeting</h3>
+                        <span class="announcement-date">3 days ago</span>
+                    </div>
+                    <p class="announcement-content">
+                        Reminder: Faculty meeting tomorrow at 9 AM.
+                    </p>
+                </div>
+                <button style="width: 100%; margin-top: 1rem;" onclick="clearNotifications()">
+                    <i class="fas fa-check-double"></i> Mark All as Read
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    
+    // If it's a dynamically created modal, remove it from DOM
+    if (modalId !== 'class-details-modal') {
+        setTimeout(() => {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.remove();
+            }
+        }, 300);
+    }
+}
+
+// Form submission functions
+function saveAttendance() {
+    const date = document.getElementById('attendanceDate').value;
+    const course = document.getElementById('courseSelect').value;
+    
+    if (!date || !course) {
+        alert('Please select date and course');
+        return;
+    }
+    
+    // In a real app, this would send data to the server
+    alert('Attendance saved successfully!');
+    
+    // Reset form
+    document.querySelectorAll('.attendance-btn').forEach(btn => {
+        btn.style.opacity = '0.6';
+    });
+}
+
+function saveGrades() {
+    const course = document.getElementById('assignmentCourseSelect').value;
+    const assignment = document.getElementById('assignmentSelect').value;
+    
+    if (!course || !assignment) {
+        alert('Please select course and assignment');
+        return;
+    }
+    
+    // In a real app, this would send data to the server
+    alert('Grades saved successfully!');
+}
+
+function saveNewClass() {
+    // In a real app, this would save the new class data
+    alert('New class added successfully!');
+    closeModal('add-class-modal');
+}
+
+function saveAnnouncement() {
+    // In a real app, this would save the announcement
+    alert('Announcement posted successfully!');
+    closeModal('add-announcement-modal');
+}
+
+function clearNotifications() {
+    // In a real app, this would clear notifications
+    document.querySelector('.notification-badge').style.display = 'none';
+    closeModal('notifications-modal');
+}
+                        </script>
+
+    </body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>University Attendance Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Add new styles for role selector */
+        .role-selector {
+            position: relative;
+            margin-bottom: 1.8rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #333;
+            appearance: none;
+            -webkit-appearance: none;
+            background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 1rem center/12px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        .role-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            width: 450px;
+            transition: all 0.3s ease;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            color: #1a365d;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .title p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation links style */
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-links a {
+            color: #1a365d;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #2a5298;
+            transform: translateY(-2px);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            position: relative;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #1a365d;
+            font-weight: 600;
+        }
+
+        .tab-slider {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            height: 3px;
+            background: #1a365d;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.9rem 1.2rem 0.9rem 40px;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #333;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a365d;
+            box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: #1a365d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            background: #2a5298;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 54, 93, 0.2);
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 1.8rem;
+            }
+            
+            .title h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1><i class="fas fa-graduation-cap"></i> UniTrack</h1>
+            <p>University Attendance Management System</p>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="nav-links">
+            <a href="about.html"><i class="fas fa-info-circle"></i> About Us</a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('signup')">Sign Up</div>
+            <div class="tab" onclick="switchTab('login')">Login</div>
+            <div class="tab-slider"></div>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signupSection">
+            <form id="signupForm">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="signupName" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="signupEmail" placeholder="University Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="signupPassword" placeholder="Create Secure Password" required>
+                </div>
+                <div class="role-selector">
+                    <i class="fas fa-user-tag role-icon"></i>
+                    <select id="signupRole" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Administrator</option>
+                        <option value="student">Student</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+                <button type="submit">Register Account</button>
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginSection" class="hidden">
+            <form id="loginForm">
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="University Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Enter Password" required>
+                </div>
+                <div class="role-selector">
+                    <i class="fas fa-user-tag role-icon"></i>
+                    <select id="loginRole" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Administrator</option>
+                        <option value="student">Student</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+                <button type="submit">Access Portal</button>
+            </form>
+        </div>
+
+        <!-- OTP Verification (hidden until a code has been generated) -->
+        <div id="otpSection" class="hidden">
+            <p style="text-align:center; color:#666; margin-bottom:1.5rem; font-size:0.9rem;">
+                Enter the 6-digit code shown in the popup to finish.
+            </p>
+            <form id="otpForm">
+                <div class="form-group">
+                    <i class="fas fa-key"></i>
+                    <input type="text" id="otpCode" placeholder="Enter 6-digit code" maxlength="6" required>
+                </div>
+                <button type="submit">Verify Account</button>
+            </form>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function switchTab(tab) {
+            const signupSection = document.getElementById('signupSection');
+            const loginSection = document.getElementById('loginSection');
+            const otpSection = document.getElementById('otpSection');
+            const tabs = document.querySelectorAll('.tab');
+            const slider = document.querySelector('.tab-slider');
+
+            // Switching tabs always backs out of the OTP step.
+            otpSection.classList.add('hidden');
+
+            if(tab === 'signup') {
+                signupSection.classList.remove('hidden');
+                loginSection.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+                slider.style.transform = 'translateX(0)';
+                slider.style.width = '50%';
+            } else {
+                loginSection.classList.remove('hidden');
+                signupSection.classList.add('hidden');
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+                slider.style.transform = 'translateX(100%)';
+                slider.style.width = '50%';
+            }
+        }
+
+        // Where our backend lives. Same host that served this page.
+        const API = '';
+
+        // We hold onto the email between "sign up" and "type your code" so the
+        // verify step knows whose account to unlock.
+        let pendingEmail = '';
+
+        // Sign Up Handler - now hits the backend, which emails an OTP.
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const role = document.getElementById('signupRole').value;
+
+            if(!role) {
+                showMessage('Please select a role!', '#dc3545', '#f8d7da');
+                return;
+            }
+
+            try {
+                const res = await fetch(API + '/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    // Remember the email, then swap the form for the code box.
+                    pendingEmail = data.email;
+                    document.getElementById('signupSection').classList.add('hidden');
+                    document.getElementById('otpSection').classList.remove('hidden');
+                    showMessage('Account created! Enter the code from the popup below.', '#28a745', '#d4edda');
+                    // Pop the code up on screen so the user can read it.
+                    showOtpPopup(data.otp);
+                } else {
+                    showMessage(data.message, '#dc3545', '#f8d7da');
+                }
+            } catch (err) {
+                showMessage('Could not reach the server. Is it running?', '#dc3545', '#f8d7da');
+            }
+        });
+
+        // OTP Handler - sends the typed code back to confirm the account.
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('otpCode').value;
+
+            try {
+                const res = await fetch(API + '/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: pendingEmail, code })
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    showMessage(data.message, '#28a745', '#d4edda');
+                    // Drop them onto the login tab so they can sign straight in.
+                    document.getElementById('otpSection').classList.add('hidden');
+                    document.getElementById('otpForm').reset();
+                    switchTab('login');
+                } else {
+                    showMessage(data.message, '#dc3545', '#f8d7da');
+                }
+            } catch (err) {
+                showMessage('Could not reach the server. Is it running?', '#dc3545', '#f8d7da');
+            }
+        });
+
+        // Login Handler - asks the backend, stores the token, then redirects.
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const role = document.getElementById('loginRole').value;
+
+            try {
+                const res = await fetch(API + '/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role })
+                });
+                const data = await res.json();
+
+                if(data.success) {
+                    // Stash the token + name so the dashboards can use them.
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userName', data.name);
+                    localStorage.setItem('userRole', data.role);
+
+                    showMessage(data.message, '#28a745', '#d4edda');
+
+                    // Send them to the right dashboard for their role.
+                    switch(data.role) {
+                        case 'admin':     window.location.href = 'admin1.html'; break;
+                        case 'student':   window.location.href = 'student1.html'; break;
+                        case 'professor': window.location.href = 'professor1.html'; break;
+                    }
+                } else {
+                    showMessage(data.message, '#dc3545', '#f8d7da');
+                }
+            } catch (err) {
+                showMessage('Could not reach the server. Is it running?', '#dc3545', '#f8d7da');
+            }
+        });
+
+        function showMessage(text, color, bgColor) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.style.color = color;
+            msgDiv.style.backgroundColor = bgColor;
+            msgDiv.style.border = `1px solid ${color}`;
+        }
+
+        // Pops the verification code up on screen. We build the whole thing in
+        // JS so we don't have to touch the page's HTML layout - it overlays on
+        // top of everything and disappears when you close it.
+        function showOtpPopup(code) {
+            // Dark see-through backdrop covering the page.
+            const overlay = document.createElement('div');
+            overlay.style.cssText =
+                'position:fixed; inset:0; background:rgba(26,54,93,0.55);' +
+                'display:flex; align-items:center; justify-content:center; z-index:1000;';
+
+            // The little white card in the middle, matching the site's style.
+            const card = document.createElement('div');
+            card.style.cssText =
+                'background:white; padding:2.5rem; border-radius:20px; text-align:center;' +
+                'box-shadow:0 12px 40px rgba(0,0,0,0.25); max-width:360px; width:90%;' +
+                "font-family:'Poppins', sans-serif;";
+
+            card.innerHTML = `
+                <i class="fas fa-shield-halved" style="font-size:2.5rem; color:#1a365d; margin-bottom:1rem;"></i>
+                <h2 style="font-family:'Playfair Display',serif; color:#1a365d; margin-bottom:0.5rem;">Verification Code</h2>
+                <p style="color:#666; font-size:0.85rem; margin-bottom:1.5rem;">
+                    Type this code into the box on the page.
+                </p>
+                <div style="font-size:2.4rem; font-weight:700; letter-spacing:10px;
+                            color:#1a365d; background:#f0f4ff; border:2px solid #e0e7ff;
+                            border-radius:12px; padding:1rem; margin-bottom:1.5rem;">
+                    ${code}
+                </div>
+                <button id="otpPopupClose" style="width:100%; padding:0.9rem; background:#1a365d;
+                        color:white; border:none; border-radius:10px; font-size:15px;
+                        font-weight:600; cursor:pointer;">Got it</button>
+            `;
+
+            overlay.appendChild(card);
+            document.body.appendChild(overlay);
+
+            // Close on the button, or by clicking the dark area around the card.
+            document.getElementById('otpPopupClose').addEventListener('click', () => overlay.remove());
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+        }
+    </script>
+</body>
+</html>
