@@ -30,6 +30,10 @@ FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 CORS(app)  # lets the pages talk to the API without browser complaints
 
+# Initialize database on startup - runs whether launched via gunicorn or directly
+database.init_db()
+database.seed_demo_data()
+
 # Tokens live in memory for simplicity: token -> user id. Restarting the server
 # logs everyone out, which is fine for a demo. Swap for a DB table if you want
 # them to survive restarts.
@@ -196,7 +200,7 @@ def login():
         "success": True,
         "message": f"Welcome, {user['name']}!",
         "token": token,
-        "name": user["name"],       # the front-end uses this for "Welcome, Bob"
+        "name": user["name"],
         "role": user["role"],
         "email": user["email"],
     })
@@ -207,7 +211,6 @@ def login():
 # ---------------------------------------------------------------------------
 
 def current_user_from_token():
-    # The browser sends the token in an Authorization header.
     token = request.headers.get("Authorization", "").replace("Bearer ", "")
     user_id = active_sessions.get(token)
     if not user_id:
@@ -279,7 +282,6 @@ def add_attendance():
     date = data.get("date")
     status = data.get("status", "present")
     remarks = data.get("remarks", "")
-    # If no target student is named, the record is filed under the caller.
     target_id = data.get("user_id", user["id"])
 
     if not course or not date:
@@ -325,11 +327,5 @@ def list_users():
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # Make sure the database and demo data exist before serving anything.
-    database.init_db()
-    database.seed_demo_data()
-    # Railway hands us a port through the PORT env var. Fall back to 5000 so
-    # running locally (python app.py) still works exactly as before.
     port = int(os.environ.get("PORT", 5000))
-    # host 0.0.0.0 lets Railway reach the app from outside the container.
     app.run(host="0.0.0.0", port=port)
