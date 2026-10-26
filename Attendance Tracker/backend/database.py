@@ -9,8 +9,8 @@ sqlite3 from the standard library, no heavy ORM. Easier to read, easier to fix.
 import sqlite3
 import os
 
-# Put the database file right next to this script so it's easy to find.
-DB_PATH = os.path.join(os.path.dirname(__file__), "attendance.db")
+# Default is attendance.db next to this file. DB_PATH overrides it (docker uses /data).
+DB_PATH = os.environ.get("DB_PATH", os.path.join(os.path.dirname(__file__), "attendance.db"))
 
 
 def get_connection():
