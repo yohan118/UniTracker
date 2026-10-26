@@ -48,3 +48,7 @@ Then open http://127.0.0.1:5000. The database and some demo courses are created 
 ## Notes
 
 In this version the OTP code shows up on screen instead of being emailed, so there's nothing to set up to test it.
+
+## Docker / CI / monitoring
+
+On the `platform` branch: Docker setup, nginx, GitHub Actions and Prometheus/Grafana. Details in [PLATFORM.md](PLATFORM.md).
