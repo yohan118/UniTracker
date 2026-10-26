@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from prometheus_flask_exporter import PrometheusMetrics
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import database
@@ -29,6 +30,7 @@ FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
 CORS(app)  # lets the pages talk to the API without browser complaints
+metrics = PrometheusMetrics(app)  # adds a /metrics page that Prometheus reads
 
 # Initialize database on startup - runs whether launched via gunicorn or directly
 database.init_db()
@@ -43,6 +45,12 @@ active_sessions = {}
 # ---------------------------------------------------------------------------
 #  Serving the HTML pages
 # ---------------------------------------------------------------------------
+
+@app.route("/health")
+def health():
+    # A tiny page that only says "I am OK". Docker, cron and CI check it.
+    return jsonify({"status": "ok"})
+
 
 @app.route("/")
 def home():

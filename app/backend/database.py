@@ -10,7 +10,7 @@ import sqlite3
 import os
 
 # Put the database file right next to this script so it's easy to find.
-DB_PATH = os.path.join(os.path.dirname(__file__), "attendance.db")
+DB_PATH = os.environ.get("DB_PATH", os.path.join(os.path.dirname(__file__), "attendance.db"))
 
 
 def get_connection():
