@@ -1,0 +1,10 @@
+groups:
+  - name: unitracker
+    rules:
+      - alert: UniTrackerDown
+        expr: up{job="unitracker"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "unitracker is down"
